@@ -1,6 +1,9 @@
-from database import *
 from dataclasses import dataclass
 from datetime import datetime
+
+
+from sprint_health.calc import get_sprint_data
+from sprint_health.calc import parse_history
 
 
 @dataclass
@@ -14,4 +17,12 @@ class StateFrame:
 
 
 def get_spring_health(sprint_id: int) -> list[StateFrame]:
-    pass
+    sid, name, raw_start_date, raw_end_date, entity_ids = tuple(get_sprint_data(sprint_id))
+
+    fmt = "%Y-%m-%d %H:%M:%S.%f"
+    start_date = datetime.strptime(raw_start_date, fmt)
+    end_date = datetime.strptime(raw_end_date, fmt)
+
+    print(parse_history(0, start_date))
+
+get_spring_health(0)
