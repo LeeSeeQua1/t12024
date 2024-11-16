@@ -1,14 +1,12 @@
-# import constants
-import pandas as pd
 import os
 import shutil
 import csv
 
-SPRINTS_PATH = 'data_for_spb_hakaton_entities/sprints-Table 1.csv'
-ENTRY_PATH = 'data_for_spb_hakaton_entities/data_for_spb_hakaton_entities1-Table 1.csv'
-HISTORY_PATH = 'data_for_spb_hakaton_entities/history-Table 1.csv'
+SPRINTS_PATH = '../dataset/sprints-Table 1.csv'
+ENTRY_PATH = '../dataset/data_for_spb_hakaton_entities1-Table 1.csv'
+HISTORY_PATH = '../dataset/history-Table 1.csv'
 
-DATA_PATH = 'data_for_spb_hakaton_entities'
+DATA_PATH = '../dataset'
 
 E_COLUMNS = ["entity_id", "status", "priority"]
 H_COLUMNS = ["entity_id", "history_property_name", "history_date", "history_change"]
@@ -52,19 +50,3 @@ with open(SPRINTS_PATH, "r", newline='') as s_file:
             if int(h_row["entity_id"]) in set_ids:
                 writer_h.writerow([value for key, value in h_row.items() if key in H_COLUMNS])
         write_h_file.close()
-
-# df_sprints: pd.DataFrame = pd.read_csv(SPRINTS_PATH, sep=';', on_bad_lines='warn', index_col="sprint_name")
-# df_history = pd.read_csv(SPRINTS_PATH, sep=';', on_bad_lines='warn')
-# df_entities = pd.read_csv(ENTRY_PATH, sep=';', on_bad_lines='warn')
-
-# for sprint, ids in df_sprints["entity_ids"].items():
-
-#     shutil.rmtree(wd)
-#     os.mkdir(wd)
-#     sprint_entries = parse_set(ids)
-
-#     df_history[df_history["entry_id"]]
-
-#     print("----------------")
-
-#     print(type(sprint_entries))
