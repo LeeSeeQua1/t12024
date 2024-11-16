@@ -10,7 +10,7 @@ DATASET_PATH = 'dataset'
 NEW_SPRINTS_PATH = f'{DATASET_PATH}/sprints.csv'
 
 
-def data_split(sprints_path: str, entry_path: str, history_path: str) -> None:
+def data_split(sprints_path: str, entry_path: str, history_path: str) -> int:
     def parse_set(s: str) -> set[int]:  # TODO move to constants
         return set(map(int, s[1:-1].split(',')))
 
@@ -67,3 +67,5 @@ def data_split(sprints_path: str, entry_path: str, history_path: str) -> None:
                     writer_h.writerow([value for key, value in h_row.items() if key in H_COLUMNS])
             write_h_file.close()
             h_file.close()
+
+    return sprint_id - 1
