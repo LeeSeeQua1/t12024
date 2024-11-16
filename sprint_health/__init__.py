@@ -12,4 +12,5 @@ class SprintHealth:
 
 
 def get_sprint_health(sprint_id: int, time: datetime) -> SprintHealth:
-    pass
+    for task_id in get_task_ids(sprint_id):
+        pass
