@@ -35,5 +35,5 @@ def get_task_ids(sprint_id: int) -> list[int]:
     pass
 
 
-def get_status(task_id: int, data: datetime) -> TaskStatus:
+def get_status(task_id: int) -> list[TaskStatus]:
     pass

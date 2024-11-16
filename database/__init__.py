@@ -1,3 +1,3 @@
-from .database_api import *
+from .data_split import data_split
 
-__all__ = ['get_status', 'get_task_ids']
+__all__ = ['data_split']
