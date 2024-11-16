@@ -4,15 +4,15 @@ import os
 import shutil
 import csv
 
-
 SPRINTS_PATH = 'data_for_spb_hakaton_entities/sprints-Table 1.csv'
 ENTRY_PATH = 'data_for_spb_hakaton_entities/data_for_spb_hakaton_entities1-Table 1.csv'
 HISTORY_PATH = 'data_for_spb_hakaton_entities/history-Table 1.csv'
 
 DATA_PATH = 'data_for_spb_hakaton_entities'
 
-E_COLUMS = ["entity_id", "status", "priority"]
-H_COLUMS = ["entity_id", "history_property_name", "history_date", "history_change"]
+E_COLUMNS = ["entity_id", "status", "priority"]
+H_COLUMNS = ["entity_id", "history_property_name", "history_date", "history_change"]
+
 
 def parse_set(s: str) -> set[int]:  # TODO move to constants
     return set(map(int, s[1:-1].split(',')))
@@ -29,44 +29,29 @@ with open(SPRINTS_PATH, "r", newline='') as s_file:
         except:
             pass
         os.mkdir(wd)
-        
+
         e_file = open(ENTRY_PATH, "r", newline='')
         e_reader = csv.DictReader(e_file, delimiter=';')
         write_e_file = open(wd + '/' + "etities.csv", "w", newline='')
         writer_e = csv.writer(write_e_file, delimiter=';')
-        writer_e.writerow(E_COLUMS) 
+        writer_e.writerow(E_COLUMNS)
         for e_row in e_reader:
             if int(e_row["entity_id"]) in set_ids:
-                writer_e.writerow([value for key, value in e_row.items() if key in E_COLUMS]) 
+                writer_e.writerow([value for key, value in e_row.items() if key in E_COLUMNS])
         write_e_file.close()
-
-        
 
         h_file = open(HISTORY_PATH, "r", newline='')
         h_reader = csv.DictReader(h_file, delimiter=';')
         write_h_file = open(wd + '/' + "history.csv", "w", newline='')
         writer_h = csv.writer(write_h_file, delimiter=';')
-        writer_h.writerow(H_COLUMS)
+        writer_h.writerow(H_COLUMNS)
         for h_row in h_reader:
             if h_row["entity_id"] == "":
                 continue
 
             if int(h_row["entity_id"]) in set_ids:
-                writer_h.writerow([value for key, value in h_row.items() if key in H_COLUMS]) 
+                writer_h.writerow([value for key, value in h_row.items() if key in H_COLUMNS])
         write_h_file.close()
-
-
-
-
-            
-
-
-
-
-
-
-
-
 
 # df_sprints: pd.DataFrame = pd.read_csv(SPRINTS_PATH, sep=';', on_bad_lines='warn', index_col="sprint_name")
 # df_history = pd.read_csv(SPRINTS_PATH, sep=';', on_bad_lines='warn')
@@ -83,4 +68,3 @@ with open(SPRINTS_PATH, "r", newline='') as s_file:
 #     print("----------------")
 
 #     print(type(sprint_entries))
-
