@@ -6,7 +6,7 @@ import csv
 from database.database_api import TaskStatus
 from database.database_api import ResolutionStatus
 
-PATH = '../dataset/'
+PATH = './dataset/'
 
 
 def get_sprint_data(sprint_id: int):
@@ -87,5 +87,3 @@ def parse_history(sprint_id: int, start_date: datetime.datetime):
                     estimation_changes[entity_id].append((time_of_change, 0))
 
     return status_changes, resolution_changes
-
-# parse_history(0, )
