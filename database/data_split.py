@@ -2,25 +2,21 @@ import os
 import shutil
 import csv
 
-DATASET_PATH = '../dataset'
-SPRINTS_PATH = f'{DATASET_PATH}/sprints1'
-ENTRY_PATH = f'{DATASET_PATH}/data1'
-HISTORY_PATH = os.getcwd() + f'{DATASET_PATH}/history1'
-
 S_COLUMNS = ["sprint_id", "sprint_name", "entity_ids"]
 E_COLUMNS = ["entity_id", "area", "status", "priority"]
 H_COLUMNS = ["entity_id", "history_property_name", "history_date", "history_change"]
 
+DATASET_PATH = '../dataset'
 NEW_SPRINTS_PATH = f'{DATASET_PATH}/sprints.csv'
 
 
-def data_split() -> None:
+def data_split(sprints_path: str, entry_path: str, history_path: str) -> None:
     def parse_set(s: str) -> set[int]:  # TODO move to constants
         return set(map(int, s[1:-1].split(',')))
 
     # parse sprints file, add ids
     sprint_id = 0
-    with open(SPRINTS_PATH, "r", newline='') as s_file:
+    with open(sprints_path, "r", newline='') as s_file:
         s_reader = csv.DictReader(s_file, delimiter=';')
         try:
             os.remove(NEW_SPRINTS_PATH)
@@ -45,7 +41,7 @@ def data_split() -> None:
                 pass
             os.mkdir(wd)
 
-            e_file = open(ENTRY_PATH, "r", newline='')
+            e_file = open(entry_path, "r", newline='')
             e_reader = csv.DictReader(e_file, delimiter=';')
             write_e_file = open(wd + '/' + "etities.csv", "w", newline='')
             writer_e = csv.writer(write_e_file, delimiter=';')
@@ -55,7 +51,7 @@ def data_split() -> None:
                     writer_e.writerow([value for key, value in e_row.items() if key in E_COLUMNS])
             write_e_file.close()
 
-            h_file = open(HISTORY_PATH, "r", newline='')
+            h_file = open(history_path, "r", newline='')
             h_reader = csv.DictReader(h_file, delimiter=';')
             write_h_file = open(wd + '/' + "history.csv", "w", newline='')
             writer_h = csv.writer(write_h_file, delimiter=';')
