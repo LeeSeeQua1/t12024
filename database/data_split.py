@@ -8,6 +8,7 @@ HISTORY_PATH = '../dataset/history-Table 1.csv'
 
 DATA_PATH = '../dataset'
 
+S_COLUMNS = ["sprint_id", "entity_ids"]
 E_COLUMNS = ["entity_id", "status", "priority"]
 H_COLUMNS = ["entity_id", "history_property_name", "history_date", "history_change"]
 
@@ -17,10 +18,21 @@ def parse_set(s: str) -> set[int]:  # TODO move to constants
 
 
 with open(SPRINTS_PATH, "r", newline='') as s_file:
+        write_s_file = open(DATA_PATH + "/" + "sprints.csv", "w", newline='')
+        writer_s = csv.writer(write_h_file, delimiter=';')
+
+
+
+
+
+
+
+with open(SPRINTS_PATH, "r", newline='') as s_file:
     s_reader = csv.DictReader(s_file, delimiter=';')
+    sprint_id = 0
     for s_row in s_reader:
         sprint, set_ids = s_row["sprint_name"], parse_set(s_row["entity_ids"])
-        wd = DATA_PATH + '/' + sprint
+        wd = DATA_PATH + '/' + sprint_id
 
         try:
             shutil.rmtree(wd)
@@ -50,3 +62,5 @@ with open(SPRINTS_PATH, "r", newline='') as s_file:
             if int(h_row["entity_id"]) in set_ids:
                 writer_h.writerow([value for key, value in h_row.items() if key in H_COLUMNS])
         write_h_file.close()
+
+        sprint_id += 1
