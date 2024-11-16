@@ -2,39 +2,44 @@ import os
 import shutil
 import csv
 
-#hui
+SPRINTS_PATH = os.getcwd() + '/dataset/sprints-Table 1.csv'
+ENTRY_PATH = os.getcwd() + '/dataset/data_for_spb_hakaton_entities1-Table 1.csv'
+HISTORY_PATH = os.getcwd() + '/dataset/history-Table 1.csv'
 
-SPRINTS_PATH = '../dataset/sprints-Table 1.csv'
-ENTRY_PATH = '../dataset/data_for_spb_hakaton_entities1-Table 1.csv'
-HISTORY_PATH = '../dataset/history-Table 1.csv'
+DATA_PATH = os.getcwd() + '/dataset'
 
-DATA_PATH = '../dataset'
-
-S_COLUMNS = ["sprint_id", "entity_ids"]
-E_COLUMNS = ["entity_id", "status", "priority"]
+S_COLUMNS = ["sprint_id", "sprint_name", "entity_ids"]
+E_COLUMNS = ["entity_id", "area", "status", "priority"]
 H_COLUMNS = ["entity_id", "history_property_name", "history_date", "history_change"]
+
+NEW_SPRINTS_PATH = os.getcwd() + '/dataset/sprints.csv'
 
 
 def parse_set(s: str) -> set[int]:  # TODO move to constants
     return set(map(int, s[1:-1].split(',')))
 
 
-with open(SPRINTS_PATH, "r", newline='') as s_file:
-        write_s_file = open(DATA_PATH + "/" + "sprints.csv", "w", newline='')
-        writer_s = csv.writer(write_h_file, delimiter=';')
-
-
-
-
-
-
-
+# parse sprints file, add ids
+sprint_id = 0
 with open(SPRINTS_PATH, "r", newline='') as s_file:
     s_reader = csv.DictReader(s_file, delimiter=';')
-    sprint_id = 0
+    try:
+        os.remove(NEW_SPRINTS_PATH)
+    except:
+        pass
+    write_s_file = open(NEW_SPRINTS_PATH, "w", newline='')
+    writer_s = csv.writer(write_s_file, delimiter=';')
+    writer_s.writerow(S_COLUMNS)
     for s_row in s_reader:
-        sprint, set_ids = s_row["sprint_name"], parse_set(s_row["entity_ids"])
-        wd = DATA_PATH + '/' + sprint_id
+        writer_s.writerow([str(sprint_id)] + [value for key, value in s_row.items() if key in S_COLUMNS])
+        sprint_id += 1
+
+
+with open(NEW_SPRINTS_PATH, "r", newline='') as s_file:
+    s_reader = csv.DictReader(s_file, delimiter=';')
+    for s_row in s_reader:
+        sprint_id, set_ids = s_row["sprint_id"], parse_set(s_row["entity_ids"])
+        wd = DATA_PATH + '/' + str(sprint_id)
 
         try:
             shutil.rmtree(wd)
@@ -64,5 +69,3 @@ with open(SPRINTS_PATH, "r", newline='') as s_file:
             if int(h_row["entity_id"]) in set_ids:
                 writer_h.writerow([value for key, value in h_row.items() if key in H_COLUMNS])
         write_h_file.close()
-
-        sprint_id += 1
