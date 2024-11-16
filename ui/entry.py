@@ -14,10 +14,18 @@ class Window(QWidget):
         self.l2 = QHBoxLayout(self)
         l1 = QVBoxLayout()
         self.l2.addLayout(l1)
-        for i in range(3):
-            btn = QPushButton('Set image')
-            btn.clicked.connect(lambda: self._choose_file(i))
-            l1.addWidget(btn)
+
+        tmp = ["Sprints", "Tasks", "History"]
+        btn = QPushButton(tmp[0])
+        btn.clicked.connect(lambda: self._choose_file(0))
+        l1.addWidget(btn)
+        btn = QPushButton(tmp[1])
+        btn.clicked.connect(lambda: self._choose_file(1))
+        l1.addWidget(btn)
+        btn = QPushButton(tmp[2])
+        btn.clicked.connect(lambda: self._choose_file(2))
+        l1.addWidget(btn)
+
         self._files: list[str | None] = [None, None, None]
         self._push_btn = QPushButton('Analyze')
         self._push_btn.clicked.connect(self._confirm)
