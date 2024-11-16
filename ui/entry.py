@@ -10,4 +10,3 @@ class Window(QMainWindow):
         self.menu = self.menuBar()
         self.file_menu = self.menu.addMenu('File')
         self._controllers = []
-        self.tab_widget.currentChanged.connect(self._update_cw)
