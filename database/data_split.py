@@ -2,8 +2,12 @@ import os
 import shutil
 import csv
 
-S_COLUMNS = ["sprint_id", "sprint_name", "entity_ids"]
-E_COLUMNS = ["entity_id", "area", "status", "priority"]
+# S_COLUMNS = ["sprint_id", "sprint_name", "entity_ids"]
+# E_COLUMNS = ["entity_id", "area", "status", "priority"]
+# H_COLUMNS = ["entity_id", "history_property_name", "history_date", "history_change"]
+
+S_COLUMNS = ["sprint_id", "sprint_name", "sprint_start_date", "sprint_end_date", "entity_ids"]
+E_COLUMNS = ["entity_id", "type", "status", "resolution"]
 H_COLUMNS = ["entity_id", "history_property_name", "history_date", "history_change"]
 
 DATASET_PATH = 'dataset'
