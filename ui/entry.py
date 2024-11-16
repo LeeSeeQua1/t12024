@@ -4,8 +4,7 @@ from PySide6.QtWidgets import QMainWindow, QTabWidget, QPushButton, QFileDialog,
 
 from sprint_health.sprint_health_api import get_spring_health
 
-
-# from database import data_split
+from database import data_split
 
 
 class Window(QWidget):
@@ -38,7 +37,7 @@ class Window(QWidget):
         dial.setNameFilter("Csv (*.csv)")
         if dial.exec():
             path = dial.selectedFiles()
-            self._files[index] = path
+            self._files[index] = path[0]
 
     def _confirm(self):
         # if not all(self._files):
@@ -50,7 +49,8 @@ class Window(QWidget):
         if self._graph_widget is not None:
             self._graph_widget.setParent(None)
 
-        self._graph_widget = Graph(10)
+        print(self._files, "data_split call")
+        self._graph_widget = Graph(data_split(*self._files))
         self.l2.addWidget(self._graph_widget)
 
 
