@@ -68,4 +68,4 @@ def data_split(sprints_path: str, entry_path: str, history_path: str) -> int:
             write_h_file.close()
             h_file.close()
 
-    return sprint_id - 1
+    return sprint_id
