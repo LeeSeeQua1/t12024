@@ -17,10 +17,12 @@ class StateFrame:
 
 
 def get_spring_health(sprint_id: int) -> list[StateFrame]:
-    sid, name, raw_start_date, raw_end_date, entity_ids = tuple(get_sprint_data(sprint_id))
-
-    fmt = "%Y-%m-%d %H:%M:%S.%f"
-    start_date = datetime.strptime(raw_start_date, fmt)
-    end_date = datetime.strptime(raw_end_date, fmt)
-
-    print(parse_history(0, start_date))
+    # sid, name, raw_start_date, raw_end_date, entity_ids = tuple(get_sprint_data(sprint_id))
+    #
+    # fmt = "%Y-%m-%d %H:%M:%S.%f"
+    # start_date = datetime.strptime(raw_start_date, fmt)
+    # end_date = datetime.strptime(raw_end_date, fmt)
+    #
+    # print(parse_history(0, start_date))
+    import random
+    return [StateFrame(datetime.now(), *(random.randint(0, 100) / 100 for _ in range(5))) for _ in range(10)]
