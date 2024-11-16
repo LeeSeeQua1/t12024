@@ -24,5 +24,3 @@ def get_spring_health(sprint_id: int) -> list[StateFrame]:
     end_date = datetime.strptime(raw_end_date, fmt)
 
     print(parse_history(0, start_date))
-
-get_spring_health(0)
