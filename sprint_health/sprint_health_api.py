@@ -15,6 +15,8 @@ from database.database_api import TaskResolution
 from database.database_api import TaskType
 from database.database_api import StatusGroup
 
+from sprint_health.backlog import split_tasks
+
 
 @dataclass
 class StateFrame:
@@ -45,6 +47,10 @@ def get_status_group(status: TaskStatus) -> StatusGroup:
 def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO: add sprint start date
     sid, name, raw_start_date, raw_end_date, raw_ids = tuple(get_sprint_data(sprint_id))
     entity_ids = list(map(int, raw_ids[1:-1].split(',')))
+
+    tasks_start_times = get_start_times(sprint_id)
+    backlog_first, backlog_second = split_tasks(sprint_id, tasks_start_times)
+
 
     fmt = "%Y-%m-%d %H:%M:%S.%f"
     start_date = datetime.strptime(raw_start_date, fmt)
@@ -77,6 +83,10 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
         done = 0
         in_progress = 0
         correct_order = 0
+
+        first_back_log_sum = 0
+        second_back_log_sum = 0
+
         for eid in entity_ids:
             if estart[eid] > curr_time:
                 continue
@@ -88,8 +98,7 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
 
             estimation = get_curr_field(curr_time, estimation_changes[eid]) if eid in estimation_changes else 0
             etype = entity_type[eid]
-            # print(etype)
-            # print(status, resolution, estimation)
+
             if (status_group == StatusGroup.CLOSED and resolution in (TaskResolution.DECLINED,
                                                                                   TaskResolution.CANCELLED,
                                                                                   TaskResolution.DUPLICATE)
@@ -106,9 +115,22 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
             if [0, 1, 2] == [get_status_group(status_changes[eid][i][1]) for i in range(len(status_changes[eid]))]:
                 correct_order += estimation
 
+            if etype == TaskType.DEFECT:
+                continue
+            if eid in backlog_first:
+                first_back_log_sum += estimation
+            elif eid in backlog_second:
+                second_back_log_sum += estimation
+
+
         sum_est = in_progress + done + cancelled
-        if sum_est > 0:
-            daily_report.append([correct_order / sum_est, in_progress / sum_est, cancelled / sum_est])
+        if sum_est == 0 or first_back_log_sum == 0:
+            continue
+        daily_report.append([correct_order / sum_est,
+                             in_progress / sum_est,
+                             cancelled / sum_est,
+                             second_back_log_sum / first_back_log_sum])
+
         curr_time += delta
 
     import random
@@ -118,6 +140,5 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
                        random.randint(0, 100) / 100,
                        daily_report[i][1],
                        daily_report[i][2],
-                       random.randint(0, 100) / 100)
-            for i in range(len(daily_report))]
+                       daily_report[i][3]) for i in range(len(daily_report))]
     # return [StateFrame(datetime.now(), *(random.randint(0, 100) / 100 for _ in range(5))) for _ in range(10)]
