@@ -2,9 +2,11 @@ import datetime
 import datetime as dt
 
 import csv
+import json
 
 from database.database_api import TaskStatus
-from database.database_api import ResolutionStatus
+from database.database_api import TaskResolution
+from database.database_api import TaskType
 
 PATH = './dataset/'
 
@@ -12,8 +14,7 @@ PATH = './dataset/'
 def get_sprint_data(sprint_id: int):
     with open(PATH + 'sprints.csv', 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f, delimiter=';')
-        for i, line in enumerate(reader):
-            print(line['sprint_id'])
+        for line in reader:
             if int(line['sprint_id']) == sprint_id:
                 return line.values()
 
@@ -25,31 +26,41 @@ def get_task_status(raw_status: str) -> TaskStatus:  # TODO: fix
         return TaskStatus.unknown
 
 
-def get_resolution_status(raw_resolution: str) -> ResolutionStatus:
+def get_task_resolution(raw_resolution: str) -> TaskResolution:
     raw_resolution = raw_resolution.strip()
     if raw_resolution == 'Готово':
-        return ResolutionStatus.DONE
+        return TaskResolution.DONE
     elif raw_resolution == 'Отклонено':
-        return ResolutionStatus.DECLINED
+        return TaskResolution.DECLINED
     elif raw_resolution == 'Дубликат':
-        return ResolutionStatus.DUPLICATE
+        return TaskResolution.DUPLICATE
     elif raw_resolution == 'Отменен инициатором':
-        return ResolutionStatus.CANCELLED
-    return ResolutionStatus.NONE
+        return TaskResolution.CANCELLED
+    return TaskResolution.NONE
+
+
+def get_task_type(raw_type: str) -> TaskType:
+    raw_type = raw_type.strip()
+    if raw_type == 'Задача':
+        return TaskType.TASK
+    elif raw_type == 'Подзадача':
+        return TaskType.SUBTASK
+    elif raw_type == 'Дефект':
+        return TaskType.DEFECT
+    elif raw_type == 'История':
+        return TaskType.HISTORY
+    return TaskType.NONE
 
 
 def parse_history(sprint_id: int, start_date: datetime.datetime):
     fmt = "%m/%d/%y %H:%M"
 
     status_changes: dict[int, list[tuple[dt.datetime, TaskStatus, float]]] = {}
-    resolution_changes: dict[int, list[tuple[dt.datetime, ResolutionStatus, float]]] = {}
+    resolution_changes: dict[int, list[tuple[dt.datetime, TaskResolution, float]]] = {}
     estimation_changes: dict[int, list[tuple[dt.datetime, int]]] = {}
     with open(PATH + str(sprint_id) + '/history.csv', 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f, delimiter=';')
-        for i, line in enumerate(reader):
-            if i == 0:
-                continue
-
+        for line in reader:
             raw_entity_id, property_name, raw_date, raw_version, change = line.values()
             entity_id = int(raw_entity_id)
             version = float(raw_version)
@@ -65,25 +76,42 @@ def parse_history(sprint_id: int, start_date: datetime.datetime):
 
             elif property_name == 'Резолюция':
                 lst = change.split('->')
-                if len(lst) == 1:
-                    resolution_changes[entity_id] = [(start_date, ResolutionStatus.NONE, 0)]
+                if len(lst) == 1:  # TODO: fix
+                    resolution_changes[entity_id] = [(start_date, TaskResolution.NONE, 0)]
                 else:
                     before, after = lst[0], lst[1]
                     if entity_id not in resolution_changes:
-                        resolution_changes[entity_id] = [(start_date, get_resolution_status(before), 0)]
+                        resolution_changes[entity_id] = [(start_date, get_task_resolution(before), 0)]
                     time_of_change = dt.datetime.strptime(raw_date, fmt)
-                    resolution_changes[entity_id].append((time_of_change, get_resolution_status(after), version))
+                    resolution_changes[entity_id].append((time_of_change, get_task_resolution(after), version))
 
             elif property_name == 'Учет рабочего времени':
                 lst = change.split('->')
-                print(lst)
-                if len(lst) == 1:
+                if len(lst) == 1:  # TODO: fix
                     estimation_changes[entity_id] = [(start_date, 0)]
                 else:
                     if entity_id not in estimation_changes:
                         estimation_changes[entity_id] = [(start_date, 0)]
                     time_of_change = dt.datetime.strptime(raw_date, fmt)
-                    print(type(lst[0]))
-                    estimation_changes[entity_id].append((time_of_change, 0))
+                    dct = json.loads(lst[1])
+                    estimation_changes[entity_id].append((time_of_change, int(dct['spent'])))
 
-    return status_changes, resolution_changes
+    return status_changes, resolution_changes, estimation_changes
+
+
+def get_types(sprint_id: int):
+    task_types: dict[int, TaskType] = {}
+    with open(PATH + str(sprint_id) + '/etities.csv', 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f, delimiter=';')
+        for line in reader:
+            task_types[int(line['entity_id'])] = get_task_type(line['type'])
+    return task_types
+
+
+def get_final_status(sprint_id: int):
+    final_status: dict[int, TaskStatus] = {}
+    with open(PATH + str(sprint_id) + '/etities.csv', 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f, delimiter=';')
+        for line in reader:
+            final_status[int(line['entity_id'])] = get_task_status(line['status'])
+    return final_status

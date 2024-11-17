@@ -23,11 +23,19 @@ class TaskStatus(Enum):
     unknown = 17
 
 
-class ResolutionStatus(IntEnum):
+class TaskResolution(IntEnum):
     DONE = 0
     DECLINED = 1
     DUPLICATE = 2
     CANCELLED = 3
+    NONE = 4
+
+
+class TaskType(IntEnum):
+    TASK = 0,
+    SUBTASK = 1,
+    DEFECT = 2,
+    HISTORY = 3,
     NONE = 4
 
 
