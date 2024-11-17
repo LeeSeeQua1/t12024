@@ -32,7 +32,7 @@ def data_split(sprints_path: str, entry_path: str, history_path: str) -> int:
             writer_s = csv.writer(write_s_file, delimiter=';')
             writer_s.writerow(S_COLUMNS)
             for s_row in s_reader:
-                writer_s.writerow([str(sprint_id)] + [value for key, value in s_row.items() if key in S_COLUMNS])
+                writer_s.writerow([str(sprint_cnt)] + [value for key, value in s_row.items() if key in S_COLUMNS])
                 sprint_cnt += 1
 
     with open(NEW_SPRINTS_PATH, "r", newline='', encoding='utf-8') as s_file:
