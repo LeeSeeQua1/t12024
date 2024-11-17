@@ -1,15 +1,25 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSlider, QProgressBar, QHBoxLayout, QGridLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSlider, QGridLayout
+from PySide6.QtGui import QColor
 
 from sprint_health.sprint_health_api import get_spring_health
 from ui.models import CustomProgressBar
 
 
-def get_bar_colour(percent: int):
-    return '#083ef0'
+def get_bar_colour(percent: int, first: int = 100, second: int = 100):
+    if percent < first:
+        return "#00ff00"
+    if percent < second:
+        return "#ffa500"
+    return "#ff0000"
 
 
-fields = ["dvdev", "planed", "todo", "canceled", "backlog"]
+red = QColor(255, 0, 0)
+orange = QColor(255, 100, 100)
+green = QColor(0, 255, 0)
+
+fields = [("dvdev", {20: orange, 50: red}), ("planed", {}), ("todo", {20: red}), ("canceled", {10: red}),
+          ("backlog", {50: red, 20: orange})]
 
 
 class GraphWindow(QWidget):
@@ -41,9 +51,9 @@ class GraphWindow(QWidget):
         for i in self._graphs:
             i.setParent(None)
         self._graphs.clear()
-        for i, name in enumerate(fields):
+        for i, (name, lines) in enumerate(fields):
             lay = QVBoxLayout()
-            bar = CustomProgressBar({20: Qt.red})
+            bar = CustomProgressBar(lines)
             value = getattr(frame, name)
             bar.setValue(value * 100)
             bar.setOrientation(Qt.Vertical)
@@ -53,13 +63,13 @@ class GraphWindow(QWidget):
                 border: 2px solid #8f8f91;
                 border-radius: 5px;
                 padding: 1px;
-                background-color: #ffffff; /* White background for the bar */
-                text-align: center; /* Text centered in the bar */
-                color: #333; /* Dark text color */
+                background-color: #ffffff;
+                text-align: center;
+                color: #333;
             }}
             QProgressBar::chunk {{
-                background-color: {get_bar_colour(value)}; /* Green for the filled portion */
-                border-radius: 5px; /* Rounded corners for the filled portion */
+                background-color: {get_bar_colour(value * 100, *lines.keys())}; 
+                border-radius: 5px; 
             }}
                             """)
             lay.addWidget(bar)

@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QProgressBar
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QProgressBar
 from PySide6.QtGui import QPainter, QPen
 
 
@@ -13,7 +12,7 @@ class CustomProgressBar(QProgressBar):
         painter = QPainter(self)
 
         for level, color in self.threshold.items():
-            pen = QPen(color, 2)
+            pen = QPen(color, 4)
             painter.setPen(pen)
 
             rect = self.rect()
