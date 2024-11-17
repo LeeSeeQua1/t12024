@@ -1,8 +1,8 @@
-from datetime import datetime
-from enum import IntEnum, Enum
+import csv
+from enum import IntEnum
 
 
-class TaskStatus(Enum):
+class TaskStatus(IntEnum):
     closed = 0,
     done = 1,
     created = 2,
@@ -23,6 +23,12 @@ class TaskStatus(Enum):
     unknown = 17
 
 
+class StatusGroup(IntEnum):
+    TO_DO = 0,
+    IN_PROGRESS = 1,
+    CLOSED = 2
+
+
 class TaskResolution(IntEnum):
     DONE = 0
     DECLINED = 1
@@ -38,10 +44,10 @@ class TaskType(IntEnum):
     HISTORY = 3,
     NONE = 4
 
+
 def get_sprints_name() -> list[str]:
     with open(f"./dataset/sprints.csv", "r", newline='', encoding='utf-8') as f:
         return [row["sprint_name"] for row in csv.DictReader(f, delimiter=';')]
-
 
 # def get_task_ids(sprint_id: int) -> list[int]:
 #     pass
