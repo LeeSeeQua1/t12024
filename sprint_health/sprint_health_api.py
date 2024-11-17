@@ -70,7 +70,6 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
         done = 0
         in_progress = 0
         for eid in entity_ids:
-            # TODO: fix fields that haven't been changed
             status = get_curr_field(curr_time, status_changes[eid]) if eid in status_changes else final_status[eid]
             resolution = get_curr_field(curr_time,
                                         resolution_changes[eid]) if eid in resolution_changes else TaskResolution.NONE
