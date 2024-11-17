@@ -71,7 +71,7 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
                                         resolution_changes[eid]) if eid in resolution_changes else TaskResolution.NONE
             estimation = get_curr_field(curr_time, estimation_changes[eid]) if eid in estimation_changes else 0
             etype = entity_type[eid]
-
+            print(status, resolution, estimation)
             if (status == TaskStatus.done and resolution in (TaskResolution.DECLINED,
                                                              TaskResolution.CANCELLED,
                                                              TaskResolution.DUPLICATE)
@@ -85,6 +85,7 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
         sum_est = in_progress + done + cancelled
         if sum_est > 0:
             daily_report.append((in_progress / sum_est, cancelled / sum_est))
+            print(in_progress / sum_est, cancelled / sum_est, done / sum_est)
         curr_time += delta
 
     import random
