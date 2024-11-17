@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from datetime import timedelta
 
-
 from sprint_health.calc import get_sprint_data
 from sprint_health.calc import parse_history
 from sprint_health.calc import get_types
@@ -33,7 +32,7 @@ def get_curr_field(curr_time: datetime, dct: list[tuple[typing.Any, ...]]):
     return dct[i][1]
 
 
-def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]: # TODO: add sprint start date
+def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO: add sprint start date
     sid, name, raw_start_date, raw_end_date, raw_ids = tuple(get_sprint_data(sprint_id))
     entity_ids = list(map(int, raw_ids[1:-1].split(',')))
 
@@ -64,6 +63,7 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]: # TODO: 
     delta = timedelta(days=1)
 
     daily_report = []
+    final_status = get_final_status(sprint_id)
 
     while curr_time <= final_time:
         cancelled = 0
@@ -71,9 +71,9 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]: # TODO: 
         in_progress = 0
         for eid in entity_ids:
             # TODO: fix fields that haven't been changed
-            final_status = get_final_status(sprint_id)
             status = get_curr_field(curr_time, status_changes[eid]) if eid in status_changes else final_status[eid]
-            resolution = get_curr_field(curr_time, resolution_changes[eid]) if eid in resolution_changes else TaskResolution.NONE
+            resolution = get_curr_field(curr_time,
+                                        resolution_changes[eid]) if eid in resolution_changes else TaskResolution.NONE
             estimation = get_curr_field(curr_time, estimation_changes[eid]) if eid in estimation_changes else 0
             etype = entity_type[eid]
 
@@ -88,9 +88,11 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]: # TODO: 
                 in_progress += estimation
 
         sum_est = in_progress + done + cancelled
-        print(in_progress / sum_est, done / sum_est, cancelled / sum_est)
+        if sum_est > 0:
+            daily_report.append((in_progress / sum_est, done / sum_est, cancelled / sum_est))
         curr_time += delta
 
-
     import random
-    return [StateFrame(datetime.now(), *(random.randint(0, 100) / 100 for _ in range(5))) for _ in range(10)]
+    st = datetime(start_date.year, start_date.month, start_date.day, *report_time)
+    return [StateFrame(st + delta * i, *(random.randint(0, 100) for _ in range(2)), *daily_report[i]) for i in range(len(daily_report))]
+    # return [StateFrame(datetime.now(), *(random.randint(0, 100) / 100 for _ in range(5))) for _ in range(10)]
