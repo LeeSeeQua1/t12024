@@ -51,7 +51,6 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
     tasks_start_times = get_start_times(sprint_id)
     backlog_first, backlog_second = split_tasks(sprint_id, tasks_start_times)
 
-
     fmt = "%Y-%m-%d %H:%M:%S.%f"
     start_date = datetime.strptime(raw_start_date, fmt)
     end_date = datetime.strptime(raw_end_date, fmt)
@@ -87,6 +86,8 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
         first_back_log_sum = 0
         second_back_log_sum = 0
 
+        finished_today_tasks = 0
+
         for eid in entity_ids:
             if estart[eid] > curr_time:
                 continue
@@ -100,8 +101,8 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
             etype = entity_type[eid]
 
             if (status_group == StatusGroup.CLOSED and resolution in (TaskResolution.DECLINED,
-                                                                                  TaskResolution.CANCELLED,
-                                                                                  TaskResolution.DUPLICATE)
+                                                                      TaskResolution.CANCELLED,
+                                                                      TaskResolution.DUPLICATE)
                     or entity_type[eid] == TaskType.DEFECT and status == TaskStatus.rejectedByThePerformer):
                 cancelled += estimation
             elif (etype == TaskType.HISTORY or etype in (TaskType.TASK, TaskType.DEFECT)
@@ -112,7 +113,13 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
 
             if eid not in status_changes:
                 continue
-            if [0, 1, 2] == [get_status_group(status_changes[eid][i][1]) for i in range(len(status_changes[eid]))]:
+            status_group_order = [get_status_group(status_changes[eid][i][1]) for i in range(len(status_changes[eid]))]
+            print(*status_group_order)
+            flag = True
+            for i in range(1, len(status_group_order)):
+                if (status_group_order[i - 1], status_group_order[i]) in ((1, 0), (2, 1), (2, 0)):
+                    flag = False
+            if flag:
                 correct_order += estimation
 
             if etype == TaskType.DEFECT:
@@ -122,11 +129,16 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
             elif eid in backlog_second:
                 second_back_log_sum += estimation
 
+            for change in status_changes[eid]:
+                if change[0].day == curr_time.day:
+                    finished_today_tasks += estimation
 
         sum_est = in_progress + done + cancelled
         if sum_est == 0 or first_back_log_sum == 0:
             continue
-        daily_report.append([correct_order / sum_est,
+
+        daily_report.append([1 - correct_order / sum_est,
+                             finished_today_tasks / sum_est,
                              in_progress / sum_est,
                              cancelled / sum_est,
                              second_back_log_sum / first_back_log_sum])
@@ -135,10 +147,5 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
 
     import random
     st = datetime(start_date.year, start_date.month, start_date.day, *report_time)
-    return [StateFrame(st + delta * i,
-                       daily_report[i][0],
-                       random.randint(0, 100) / 100,
-                       daily_report[i][1],
-                       daily_report[i][2],
-                       daily_report[i][3]) for i in range(len(daily_report))]
+    return [StateFrame(st + delta * i, *daily_report[i]) for i in range(len(daily_report))]
     # return [StateFrame(datetime.now(), *(random.randint(0, 100) / 100 for _ in range(5))) for _ in range(10)]
