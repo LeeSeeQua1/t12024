@@ -18,4 +18,4 @@ class CustomProgressBar(QProgressBar):
             rect = self.rect()
             threshold_position = rect.height() - (rect.height() * level / 100)
 
-            painter.drawLine(rect.left(), threshold_position, rect.right(), threshold_position)
+            painter.drawLine(rect.left() + 5, threshold_position, rect.right() - 5, threshold_position)

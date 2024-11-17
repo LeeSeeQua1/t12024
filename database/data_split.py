@@ -1,6 +1,7 @@
 import os
 import shutil
 import csv
+from database.database_api import get_sprints_name
 
 # S_COLUMNS = ["sprint_id", "sprint_name", "entity_ids"]
 # E_COLUMNS = ["entity_id", "area", "status", "priority"]
@@ -14,7 +15,7 @@ DATASET_PATH = 'dataset'
 NEW_SPRINTS_PATH = f'{DATASET_PATH}/sprints.csv'
 
 
-def data_split(sprints_path: str, entry_path: str, history_path: str) -> int:
+def data_split(sprints_path: str, entry_path: str, history_path: str) -> list[str]:
     def parse_set(s: str) -> set[int]:  # TODO move to constants
         return set(map(int, s[1:-1].split(',')))
 
@@ -72,4 +73,4 @@ def data_split(sprints_path: str, entry_path: str, history_path: str) -> int:
             write_h_file.close()
             h_file.close()
 
-    return sprint_cnt
+    return get_sprints_name()
