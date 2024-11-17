@@ -7,7 +7,7 @@ import csv
 # H_COLUMNS = ["entity_id", "history_property_name", "history_date", "history_change"]
 
 S_COLUMNS = ["sprint_id", "sprint_name", "sprint_start_date", "sprint_end_date", "entity_ids"]
-E_COLUMNS = ["entity_id", "type", "status", "resolution"]
+E_COLUMNS = ["entity_id", "type", "status", "create_date", "resolution"]
 H_COLUMNS = ["entity_id", "history_property_name", "history_date", "history_version", "history_change"]
 
 DATASET_PATH = 'dataset'

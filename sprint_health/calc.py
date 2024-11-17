@@ -52,7 +52,7 @@ def get_task_type(raw_type: str) -> TaskType:
     return TaskType.NONE
 
 
-def parse_history(sprint_id: int, start_date: datetime.datetime):
+def parse_history(sprint_id: int, estart):
     fmt = "%m/%d/%y %H:%M"
 
     status_changes: dict[int, list[tuple[dt.datetime, TaskStatus, float]]] = {}
@@ -64,6 +64,7 @@ def parse_history(sprint_id: int, start_date: datetime.datetime):
             raw_entity_id, property_name, raw_date, raw_version, change = line.values()
             entity_id = int(raw_entity_id)
             version = float(raw_version)
+            start_date = estart[entity_id]
 
             if property_name == 'Статус':
                 before, after = change.split('->')
@@ -115,3 +116,14 @@ def get_final_status(sprint_id: int):
         for line in reader:
             final_status[int(line['entity_id'])] = get_task_status(line['status'])
     return final_status
+
+
+def get_start_times(sprint_id: int):
+    start_times: dict[int, datetime] = {}
+    fmt = "%Y-%m-%d %H:%M:%S.%f"
+    with open(PATH + str(sprint_id) + '/etities.csv', 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f, delimiter=';')
+        for line in reader:
+            start_times[int(line['entity_id'])] = dt.datetime.strptime(line['create_date'], fmt)
+    return start_times
+
