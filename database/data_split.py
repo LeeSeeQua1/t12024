@@ -19,7 +19,7 @@ def data_split(sprints_path: str, entry_path: str, history_path: str) -> int:
         return set(map(int, s[1:-1].split(',')))
 
     # parse sprints file, add ids
-    sprint_id = 0
+    sprint_cnt = 0
     with open(sprints_path, "r", newline='', encoding='utf-8') as s_file:
         s_reader = csv.DictReader(s_file, delimiter=';')
 
@@ -33,7 +33,7 @@ def data_split(sprints_path: str, entry_path: str, history_path: str) -> int:
             writer_s.writerow(S_COLUMNS)
             for s_row in s_reader:
                 writer_s.writerow([str(sprint_id)] + [value for key, value in s_row.items() if key in S_COLUMNS])
-                sprint_id += 1
+                sprint_cnt += 1
 
     with open(NEW_SPRINTS_PATH, "r", newline='', encoding='utf-8') as s_file:
         s_reader = csv.DictReader(s_file, delimiter=';')
@@ -56,7 +56,7 @@ def data_split(sprints_path: str, entry_path: str, history_path: str) -> int:
                 if int(e_row["entity_id"]) in set_ids:
                     writer_e.writerow([value for key, value in e_row.items() if key in E_COLUMNS])
             write_e_file.close()
-            e_file
+            e_file.close()
 
             h_file = open(history_path, "r", newline='', encoding='utf-8')
             h_reader = csv.DictReader(h_file, delimiter=';')
@@ -72,4 +72,4 @@ def data_split(sprints_path: str, entry_path: str, history_path: str) -> int:
             write_h_file.close()
             h_file.close()
 
-    return sprint_id
+    return sprint_cnt
