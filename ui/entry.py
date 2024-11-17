@@ -60,10 +60,10 @@ class Window(QWidget):
             self.col_lay.setParent(None)
             # self._graph_widget.setParent(None)
 
-        print(self._files, "data_split call")
+        # print(self._files, "data_split call")
         # self._graph_widget = Graph(data_split(*self._files))
         # self._graph_widget = Graph(10, self.l2)
-        self._num_of_rows = 10
+        self._num_of_rows = data_split(*self._files)
         self._text = QLineEdit("1")
         self.col_lay = QVBoxLayout()
         self.col_lay.addWidget(self._text)
