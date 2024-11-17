@@ -8,6 +8,7 @@ from sprint_health.calc import get_sprint_data
 from sprint_health.calc import parse_history
 from sprint_health.calc import get_types
 from sprint_health.calc import get_final_status
+from sprint_health.calc import get_start_times
 
 from database.database_api import TaskStatus
 from database.database_api import TaskResolution
@@ -40,7 +41,8 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
     start_date = datetime.strptime(raw_start_date, fmt)
     end_date = datetime.strptime(raw_end_date, fmt)
 
-    status_changes, resolution_changes, estimation_changes = parse_history(sprint_id, start_date)
+    estart = get_start_times(sprint_id)
+    status_changes, resolution_changes, estimation_changes = parse_history(sprint_id, estart)
     entity_type = get_types(sprint_id)
 
     for eid in status_changes.keys():
