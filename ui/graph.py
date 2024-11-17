@@ -2,6 +2,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSlider, QProgressBar, QHBoxLayout, QGridLayout
 
 from sprint_health.sprint_health_api import get_spring_health
+from ui.models import CustomProgressBar
 
 
 def get_bar_colour(percent: int):
@@ -40,7 +41,7 @@ class GraphWindow(QWidget):
         self._graphs.clear()
         for i, name in enumerate(fields):
             lay = QVBoxLayout()
-            bar = QProgressBar()
+            bar = CustomProgressBar({20: Qt.red})
             value = getattr(frame, name)
             bar.setValue(value * 100)
             bar.setOrientation(Qt.Vertical)
