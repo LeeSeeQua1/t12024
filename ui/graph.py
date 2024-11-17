@@ -18,8 +18,8 @@ red = QColor(190, 30, 30)
 orange = QColor(250, 100, 10)
 green = QColor(0, 150, 0)
 
-localization = {"dvdev": "Ошибки", "planed": "По плану",
-                "todo": "В работе", "canceled": "Снято", "backlog": "Оценка изменения бэклога"}
+localization = {"dvdev": "Ошибки", "planed": "Завершено сегодня",
+                "todo": "В работе", "canceled": "Снято", "backlog": "бэклог"}
 
 
 # fields = [("dvdev", {70: orange, 90: red}), ("planed", {}), ("todo", {20: red}), ("canceled", {10: red}),
@@ -54,7 +54,7 @@ class GraphWindow(QWidget):
         self.lay.addWidget(self._slider_value_label, 0, 0, 1, len(self._d))
         self._graphs = []
         self._display(self._values[0])
-        self.setGeometry(self._graph_width, self._graph_width, self._graph_width * len(self._d) + 100, 480)
+        self.setGeometry(100, 50, self._graph_width * len(self._d) + 100, 780)
 
         label = QLabel("""
 1) Ошибки - указывает, на то какое количество времени было потрачено на ошибки.

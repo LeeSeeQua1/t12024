@@ -59,7 +59,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.menu = self.menuBar()
-        self.file_menu = self.menu.addMenu('File')
+        self.file_menu = self.menu.addMenu('Файл')
         self._d = deepcopy(ls)
         for i in ls:
             if len(i[1]) == 0:
