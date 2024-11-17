@@ -20,6 +20,7 @@ class GraphWindow(QWidget):
 
     def __init__(self, sprint_id: int):
         super().__init__()
+        self._graph_width = 150
         self.lay = QGridLayout(self)
         self._values = get_spring_health(sprint_id - 1)
         self._slider = QSlider(Qt.Horizontal)
@@ -30,6 +31,7 @@ class GraphWindow(QWidget):
         self.lay.addWidget(self._slider, 0, 0, 1, len(fields))
         self._graphs = []
         self._display(self._values[0])
+        self.setGeometry(self._graph_width, self._graph_width, self._graph_width * len(fields), 480)
 
     def _on_update(self):
         frame = self._values[self._slider.value() - 1]
@@ -45,7 +47,7 @@ class GraphWindow(QWidget):
             value = getattr(frame, name)
             bar.setValue(value * 100)
             bar.setOrientation(Qt.Vertical)
-            bar.setFixedWidth(150)
+            bar.setFixedWidth(self._graph_width)
             bar.setStyleSheet(f"""
                                 QProgressBar {{
                 border: 2px solid #8f8f91;
