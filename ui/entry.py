@@ -2,7 +2,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCharts import QChart, QChartView, QBarCategoryAxis, QBarSeries, QBarSet, QValueAxis
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow, QTabWidget, QPushButton, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout, \
-    QLabel, QLineEdit, QGridLayout, QSlider, QProgressBar
+    QLabel, QLineEdit, QGridLayout, QSlider, QProgressBar, QComboBox
 import os
 
 from sprint_health.sprint_health_api import get_spring_health, StateFrame
@@ -54,43 +54,42 @@ class Window(QWidget):
             self._btns[index].setText(os.path.basename(path) + ' (' + self._table_names[index] + ')')
 
     def _confirm(self):
-        # todo
-        # if not all(self._files):
-        #     error_dialog = QtWidgets.QErrorMessage()
-        #     error_dialog.showMessage('You should clip all necessary tables')
-        #     return
-        # self.l2.addWidget(Graph(data_split(*self._files)))
+        if not all(self._files):
+            self.error_dialog = QtWidgets.QErrorMessage()
+            self.error_dialog.showMessage('You should attach all necessary tables')
+            return
 
         if self.col_lay is not None:
             self.col_lay.setParent(None)
-            # self._graph_widget.setParent(None)
 
-        # print(self._files, "data_split call")
-        # self._graph_widget = Graph(data_split(*self._files))
-        # self._graph_widget = Graph(10, self.l2)
-        self._num_of_rows = data_split(*self._files)
+        # self._num_of_rows = data_split(*self._files)
         self._text = QLineEdit("1")
+        self._combo = QComboBox()
+        self._combo.setCurrentIndex(0)
+        self._combo.currentIndexChanged.connect(self._get_combo_index)
+        self._combo.addItems(data_split(*self._files))
         self.col_lay = QVBoxLayout()
         self.col_lay.addWidget(self._text)
+        self._current_sprint_id = 0
         btn = QPushButton("push")
-        btn.clicked.connect(lambda: (print(self._text.text()), self._get_sprint(self._text.text())))
+        btn.clicked.connect(lambda: self._get_sprint(self._current_sprint_id))
         self.col_lay.addWidget(btn)
+        self.col_lay.addWidget(self._combo)
         self.l2.addLayout(self.col_lay)
 
-    def _get_sprint(self, sprint_id: str):
-        try:
-            sprint_id = int(sprint_id)
-        except ValueError:
-            pass
-        if isinstance(sprint_id, str) or sprint_id > self._num_of_rows:
-            error_dialog = QtWidgets.QMessageBox()
-            error_dialog.setText('You should input number between 1 and number of sprints')
-            error_dialog.exec()
-            return
+    def _get_combo_index(self, sprint_id: int):
+        print("here", sprint_id, type(sprint_id))
+        self._current_sprint_id = sprint_id
+
+    def _get_sprint(self, sprint_id: int):
+        # try:
+        #     sprint_id = int(sprint_id)
+        # except ValueError:
+        #     pass
+        # if isinstance(sprint_id, str) or sprint_id > self._num_of_rows:
+        #     error_dialog = QtWidgets.QMessageBox()
+        #     error_dialog.setText('You should input number between 1 and number of sprints')
+        #     error_dialog.exec()
+        #     return
         self.window = GraphWindow(sprint_id)
         self.window.show()
-
-
-class Graph(QWidget):
-    def __init__(self, num_of_rows: int, layout):
-        super().__init__()

@@ -32,20 +32,29 @@ class GraphWindow(QWidget):
         super().__init__()
         self._graph_width = 150
         self.lay = QGridLayout(self)
-        self._values = get_spring_health(sprint_id - 1)
+        self._values = get_spring_health(sprint_id)
         self._slider = QSlider(Qt.Horizontal)
         self._slider.setMinimum(1)
         self._slider.setMaximum(len(self._values))
         self._slider.setTickInterval(1)
         self._slider.valueChanged.connect(self._on_update)
-        self.lay.addWidget(self._slider, 0, 0, 1, len(fields))
+
+        self._slider_value_label = QLabel(f"Date: {self._get_current_frame_date()}")
+        self._slider_value_label.setAlignment(Qt.AlignCenter)
+
+        self.lay.addWidget(self._slider, 1, 0, 1, len(fields))
+        self.lay.addWidget(self._slider_value_label, 0, 0, 1, len(fields))
         self._graphs = []
         self._display(self._values[0])
         self.setGeometry(self._graph_width, self._graph_width, self._graph_width * len(fields), 480)
 
     def _on_update(self):
         frame = self._values[self._slider.value() - 1]
+        self._slider_value_label.setText(f"Date: {self._get_current_frame_date()}")
         self._display(frame)
+
+    def _get_current_frame_date(self):
+        return self._values[self._slider.value() - 1].Data.strftime("%d.%m.%y")
 
     def _display(self, frame):
         for i in self._graphs:
@@ -78,6 +87,4 @@ class GraphWindow(QWidget):
             self._graphs.append(lay)
             self._graphs.append(txt)
             self._graphs.append(bar)
-            # self._progress_bars.append(bar)
-            # self._progress_bars.append(txt)
-            self.lay.addLayout(lay, 1, i)
+            self.lay.addLayout(lay, 2, i)
