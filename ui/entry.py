@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QMainWindow, QTabWidget, QPushButton, QFileDialog,
 from sprint_health.sprint_health_api import get_spring_health, StateFrame
 
 from database import data_split
+from ui.graph import GraphWindow
 
 
 class Window(QWidget):
@@ -82,59 +83,8 @@ class Window(QWidget):
             error_dialog.setText('You should input number between 1 and number of sprints')
             error_dialog.exec()
             return
-        if self._slider is not None:
-            self._slider.setParent(None)
-        self._values = get_spring_health(sprint_id - 1)
-        self._slider = QSlider(Qt.Horizontal)
-        self._slider.setMinimum(1)
-        self._slider.setMaximum(len(self._values))
-        self._slider.setTickInterval(1)
-        self._slider.valueChanged.connect(self._on_update)
-        self.col_lay.addWidget(self._slider)
-
-    def _on_update(self):
-        if self._progress_bars:
-            for i in self._progress_bars:
-                i.setParent(None)
-            self._progress_bars.clear()
-        frame = self._values[self._slider.value() - 1]
-        self._progress_bars = []
-        ls = ["dvdev", "planed", "todo", "canceled", "backlog"]
-        for name in ls:
-            lay = QVBoxLayout()
-            bar = QProgressBar()
-            bar.setValue(getattr(frame, name) * 100)
-            bar.setOrientation(Qt.Vertical)
-            bar.setFixedWidth(150)
-            bar.setStyleSheet(f"""
-                        QProgressBar {{
-        border: 2px solid #8f8f91;
-        border-radius: 5px;
-        padding: 1px;
-        background-color: #ffffff; /* White background for the bar */
-        text-align: center; /* Text centered in the bar */
-        color: #333; /* Dark text color */
-    }}
-    QProgressBar::chunk {{
-        background-color: {self._get_bar_color(1)}; /* Green for the filled portion */
-        border-radius: 5px; /* Rounded corners for the filled portion */
-    }}
-                    """)
-            lay.addWidget(bar)
-            txt = QLabel(name)
-            lay.addWidget(txt)
-            self._progress_bars.append(lay)
-            # self._progress_bars.append(bar)
-            # self._progress_bars.append(txt)
-            self.l2.addLayout(lay)
-
-        # for i in self._progress_bars:
-        #     self.l2.addLayout(i)
-        print(frame.Data)
-
-    def _get_bar_color(self, index: int):
-        colors = ["#355E3B", "#2196F3", "#FFC107", "#F44336", "#9C27B0"]
-        return colors[index % len(colors)]
+        self.window = GraphWindow(sprint_id)
+        self.window.show()
 
 
 class Graph(QWidget):
