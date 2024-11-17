@@ -18,6 +18,7 @@ red = QColor(190, 30, 30)
 orange = QColor(250, 100, 10)
 green = QColor(0, 150, 0)
 
+
 # fields = [("dvdev", {70: orange, 90: red}), ("planed", {}), ("todo", {20: red}), ("canceled", {10: red}),
 #           ("backlog", {50: red, 20: orange})]
 
@@ -51,6 +52,16 @@ class GraphWindow(QWidget):
         self._graphs = []
         self._display(self._values[0])
         self.setGeometry(self._graph_width, self._graph_width, self._graph_width * len(self._d) + 100, 480)
+
+        label = QLabel("""
+1) Ошибки - указывает, на то какое количество времени было потрачено на ошибки.
+2) По плану - процент задач, которые завершены в выбранный день.
+3) В работе - процент задач, которые находятся в разработке в данный момент.
+4) Снято - процент отмененных задач.
+5) Оценка изменения бэклога - показывает на сколько верно было изначально оценены задачи.
+ Точное значение: отношение оценок задач добавленных после начала спринта к оценкам начальных задач.
+""")
+        self.lay.addWidget(label, 4, 0, 1, 5)
 
     def _on_update(self):
         frame = self._values[self._slider.value() - 1]
@@ -86,7 +97,7 @@ class GraphWindow(QWidget):
                 border-radius: 5px; 
             }}
                             """)
-            txt_ = QLabel(f"          {value*100:.2f}%")
+            txt_ = QLabel(f"          {value * 100:.2f}%")
             txt_.setStyleSheet("font-size: 14px; font-weight: bold;")
             lay.addWidget(txt_)
             lay.addWidget(bar)
