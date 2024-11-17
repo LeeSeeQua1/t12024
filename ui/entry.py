@@ -84,7 +84,7 @@ class Window(QWidget):
             return
         if self._slider is not None:
             self._slider.setParent(None)
-        self._values = get_spring_health(sprint_id)
+        self._values = get_spring_health(sprint_id - 1)
         self._slider = QSlider(Qt.Horizontal)
         self._slider.setMinimum(1)
         self._slider.setMaximum(len(self._values))
@@ -97,7 +97,7 @@ class Window(QWidget):
             for i in self._progress_bars:
                 i.setParent(None)
             self._progress_bars.clear()
-        frame = self._values[self._slider.value()]
+        frame = self._values[self._slider.value() - 1]
         self._progress_bars = []
         ls = ["dvdev", "planed", "todo", "canceled", "backlog"]
         for name in ls:
@@ -106,19 +106,19 @@ class Window(QWidget):
             bar.setValue(getattr(frame, name) * 100)
             bar.setOrientation(Qt.Vertical)
             bar.setFixedWidth(150)
-            bar.setStyleSheet("""
-                        QProgressBar {
+            bar.setStyleSheet(f"""
+                        QProgressBar {{
         border: 2px solid #8f8f91;
         border-radius: 5px;
         padding: 1px;
         background-color: #ffffff; /* White background for the bar */
         text-align: center; /* Text centered in the bar */
         color: #333; /* Dark text color */
-    }
-    QProgressBar::chunk {
-        background-color: #4CAF50; /* Green for the filled portion */
+    }}
+    QProgressBar::chunk {{
+        background-color: {self._get_bar_color(1)}; /* Green for the filled portion */
         border-radius: 5px; /* Rounded corners for the filled portion */
-    }
+    }}
                     """)
             lay.addWidget(bar)
             txt = QLabel(name)
@@ -133,7 +133,7 @@ class Window(QWidget):
         print(frame.Data)
 
     def _get_bar_color(self, index: int):
-        colors = ["#4CAF50", "#2196F3", "#FFC107", "#F44336", "#9C27B0"]
+        colors = ["#355E3B", "#2196F3", "#FFC107", "#F44336", "#9C27B0"]
         return colors[index % len(colors)]
 
 
