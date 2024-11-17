@@ -39,9 +39,12 @@ class TaskType(IntEnum):
     NONE = 4
 
 
-def get_task_ids(sprint_id: int) -> list[int]:
-    pass
+# def get_task_ids(sprint_id: int) -> list[int]:
+#     pass
+#
+#
+# def get_status(task_id: int) -> list[TaskStatus]:
+#     pass
 
-
-def get_status(task_id: int) -> list[TaskStatus]:
+def get_tasks_names(sprint_id: int) -> list[str]:
     pass
