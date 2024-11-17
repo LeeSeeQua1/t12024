@@ -8,7 +8,7 @@ from ui.select_dialog import FileSelectionDialog
 
 
 class Window(QWidget):
-    def __init__(self):
+    def __init__(self, d):
         super().__init__()
         self._lay = QVBoxLayout(self)
 
@@ -25,6 +25,7 @@ class Window(QWidget):
         description_label.setStyleSheet("color: gray; font-size: 14px;")
         self._lay.addWidget(description_label)
 
+        self._d = d
         self._confirm_btn = None
         self._combo = None
         self._files: list[str | None] = [None, None, None]
@@ -73,5 +74,5 @@ class Window(QWidget):
         self._current_sprint_id = sprint_id
 
     def _get_sprint(self, sprint_id: int):
-        self.window = GraphWindow(sprint_id)
+        self.window = GraphWindow(sprint_id, self._d)
         self.window.show()

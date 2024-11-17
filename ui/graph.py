@@ -6,7 +6,7 @@ from sprint_health.sprint_health_api import get_spring_health
 from ui.models import CustomProgressBar
 
 
-def get_bar_colour(percent: int, first: int = 100, second: int = 100):
+def get_bar_colour(percent: int, first: int = 100, second: int = 0):
     if percent < first:
         return "#00ff00"
     if percent < second:
@@ -18,8 +18,8 @@ red = QColor(190, 30, 30)
 orange = QColor(250, 100, 10)
 green = QColor(0, 150, 0)
 
-fields = [("dvdev", {70: orange, 90: red}), ("planed", {}), ("todo", {20: red}), ("canceled", {10: red}),
-          ("backlog", {50: red, 20: orange})]
+# fields = [("dvdev", {70: orange, 90: red}), ("planed", {}), ("todo", {20: red}), ("canceled", {10: red}),
+#           ("backlog", {50: red, 20: orange})]
 
 
 class GraphWindow(QWidget):
@@ -28,11 +28,12 @@ class GraphWindow(QWidget):
     will appear as a free-floating window as we want.
     """
 
-    def __init__(self, sprint_id: int):
+    def __init__(self, sprint_id: int, d):
         super().__init__()
         self._graph_width = 150
         self.lay = QGridLayout(self)
         self.lay.setSpacing(30)
+        self._d = d
         pad = 30
         self.lay.setContentsMargins(pad, pad, pad, pad)
         self._values = get_spring_health(sprint_id)
@@ -45,11 +46,11 @@ class GraphWindow(QWidget):
         self._slider_value_label = QLabel(f"Date: {self._get_current_frame_date()}")
         self._slider_value_label.setAlignment(Qt.AlignCenter)
 
-        self.lay.addWidget(self._slider, 1, 0, 1, len(fields))
-        self.lay.addWidget(self._slider_value_label, 0, 0, 1, len(fields))
+        self.lay.addWidget(self._slider, 1, 0, 1, len(self._d))
+        self.lay.addWidget(self._slider_value_label, 0, 0, 1, len(self._d))
         self._graphs = []
         self._display(self._values[0])
-        self.setGeometry(self._graph_width, self._graph_width, self._graph_width * len(fields) + 100, 480)
+        self.setGeometry(self._graph_width, self._graph_width, self._graph_width * len(self._d) + 100, 480)
 
     def _on_update(self):
         frame = self._values[self._slider.value() - 1]
@@ -63,7 +64,7 @@ class GraphWindow(QWidget):
         for i in self._graphs:
             i.setParent(None)
         self._graphs.clear()
-        for i, (name, lines) in enumerate(fields):
+        for i, (name, lines) in enumerate(self._d):
             lay = QVBoxLayout()
             lay.setAlignment(Qt.AlignCenter)
             bar = CustomProgressBar(lines)
@@ -85,12 +86,12 @@ class GraphWindow(QWidget):
                 border-radius: 5px; 
             }}
                             """)
-            txt_ = QLabel(f"\t     {value*100:.2f}%")
-            dummy = QHBoxLayout()
-            lay.addLayout(dummy)
-            dummy.addWidget(txt_)
+            txt_ = QLabel(f"          {value*100:.2f}%")
+            txt_.setStyleSheet("font-size: 14px; font-weight: bold;")
+            lay.addWidget(txt_)
             lay.addWidget(bar)
-            txt = QLabel('\t   ' + name)
+            txt = QLabel('\t ' + name)
+            txt.setStyleSheet("font-size: 14px; font-weight: bold;")
             lay.addWidget(txt)
             self._graphs.append(lay)
             self._graphs.append(txt)
