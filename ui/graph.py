@@ -18,6 +18,9 @@ red = QColor(190, 30, 30)
 orange = QColor(250, 100, 10)
 green = QColor(0, 150, 0)
 
+localization = {"dvdev": "Ошибки", "planed": "По плану",
+                "todo": "В работе", "canceled": "Снято", "backlog": "Оценка изменения бэклога"}
+
 
 # fields = [("dvdev", {70: orange, 90: red}), ("planed", {}), ("todo", {20: red}), ("canceled", {10: red}),
 #           ("backlog", {50: red, 20: orange})]
@@ -59,8 +62,9 @@ class GraphWindow(QWidget):
 3) В работе - процент задач, которые находятся в разработке в данный момент.
 4) Снято - процент отмененных задач.
 5) Оценка изменения бэклога - показывает на сколько верно было изначально оценены задачи.
- Точное значение: отношение оценок задач добавленных после начала спринта к оценкам начальных задач.
+   Точное значение: отношение оценок задач добавленных после начала спринта к оценкам начальных задач.
 """)
+        label.setStyleSheet("font-size: 14px; font-weight: bold;")
         self.lay.addWidget(label, 4, 0, 1, 5)
 
     def _on_update(self):
@@ -101,7 +105,7 @@ class GraphWindow(QWidget):
             txt_.setStyleSheet("font-size: 14px; font-weight: bold;")
             lay.addWidget(txt_)
             lay.addWidget(bar)
-            txt = QLabel('\t ' + name)
+            txt = QLabel(localization[name])
             txt.setStyleSheet("font-size: 14px; font-weight: bold;")
             lay.addWidget(txt)
             self._graphs.append(lay)

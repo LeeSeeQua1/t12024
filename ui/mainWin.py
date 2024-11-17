@@ -62,6 +62,8 @@ class MainWindow(QMainWindow):
         self.file_menu = self.menu.addMenu('File')
         self._d = deepcopy(ls)
         for i in ls:
+            if len(i[1]) == 0:
+                continue
             action = QAction(f'Change {i[0]}', self)
             action.triggered.connect(lambda checked, name=i[0]: self._action(name))
             self.file_menu.addAction(action)
