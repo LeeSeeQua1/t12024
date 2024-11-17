@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSlider, QGridLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QSlider, QGridLayout, QHBoxLayout
 from PySide6.QtGui import QColor
 
 from sprint_health.sprint_health_api import get_spring_health
@@ -14,11 +14,11 @@ def get_bar_colour(percent: int, first: int = 100, second: int = 100):
     return "#ff0000"
 
 
-red = QColor(255, 0, 0)
-orange = QColor(255, 100, 100)
-green = QColor(0, 255, 0)
+red = QColor(190, 30, 30)
+orange = QColor(250, 100, 10)
+green = QColor(0, 150, 0)
 
-fields = [("dvdev", {20: orange, 50: red}), ("planed", {}), ("todo", {20: red}), ("canceled", {10: red}),
+fields = [("dvdev", {70: orange, 90: red}), ("planed", {}), ("todo", {20: red}), ("canceled", {10: red}),
           ("backlog", {50: red, 20: orange})]
 
 
@@ -65,9 +65,11 @@ class GraphWindow(QWidget):
         self._graphs.clear()
         for i, (name, lines) in enumerate(fields):
             lay = QVBoxLayout()
+            lay.setAlignment(Qt.AlignCenter)
             bar = CustomProgressBar(lines)
             value = getattr(frame, name)
             bar.setValue(value * 100)
+            bar.setTextVisible(False)
             bar.setOrientation(Qt.Vertical)
             bar.setFixedWidth(self._graph_width)
             bar.setStyleSheet(f"""
@@ -76,7 +78,6 @@ class GraphWindow(QWidget):
                 border-radius: 5px;
                 padding: 1px;
                 background-color: #ffffff;
-                text-align: center;
                 color: #333;
             }}
             QProgressBar::chunk {{
@@ -84,10 +85,15 @@ class GraphWindow(QWidget):
                 border-radius: 5px; 
             }}
                             """)
+            txt_ = QLabel(f"\t     {value*100:.2f}%")
+            dummy = QHBoxLayout()
+            lay.addLayout(dummy)
+            dummy.addWidget(txt_)
             lay.addWidget(bar)
-            txt = QLabel(name)
+            txt = QLabel('\t   ' + name)
             lay.addWidget(txt)
             self._graphs.append(lay)
             self._graphs.append(txt)
+            self._graphs.append(txt_)
             self._graphs.append(bar)
             self.lay.addLayout(lay, 2, i)
