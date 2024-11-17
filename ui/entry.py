@@ -39,8 +39,6 @@ class Window(QWidget):
 
 #
         self.col_lay = None
-        self._num_of_rows = None
-        self._text = None
         self._slider = None
         self._values: list[StateFrame] = []
         self._progress_bars = []
@@ -62,19 +60,16 @@ class Window(QWidget):
         if self.col_lay is not None:
             self.col_lay.setParent(None)
 
-        # self._num_of_rows = data_split(*self._files)
-        self._text = QLineEdit("1")
         self._combo = QComboBox()
         self._combo.setCurrentIndex(0)
         self._combo.currentIndexChanged.connect(self._get_combo_index)
         self._combo.addItems(data_split(*self._files))
         self.col_lay = QVBoxLayout()
-        self.col_lay.addWidget(self._text)
         self._current_sprint_id = 0
         btn = QPushButton("push")
         btn.clicked.connect(lambda: self._get_sprint(self._current_sprint_id))
-        self.col_lay.addWidget(btn)
         self.col_lay.addWidget(self._combo)
+        self.col_lay.addWidget(btn)
         self.l2.addLayout(self.col_lay)
 
     def _get_combo_index(self, sprint_id: int):
@@ -82,14 +77,5 @@ class Window(QWidget):
         self._current_sprint_id = sprint_id
 
     def _get_sprint(self, sprint_id: int):
-        # try:
-        #     sprint_id = int(sprint_id)
-        # except ValueError:
-        #     pass
-        # if isinstance(sprint_id, str) or sprint_id > self._num_of_rows:
-        #     error_dialog = QtWidgets.QMessageBox()
-        #     error_dialog.setText('You should input number between 1 and number of sprints')
-        #     error_dialog.exec()
-        #     return
         self.window = GraphWindow(sprint_id)
         self.window.show()

@@ -32,6 +32,9 @@ class GraphWindow(QWidget):
         super().__init__()
         self._graph_width = 150
         self.lay = QGridLayout(self)
+        self.lay.setSpacing(30)
+        pad = 30
+        self.lay.setContentsMargins(pad, pad, pad, pad)
         self._values = get_spring_health(sprint_id)
         self._slider = QSlider(Qt.Horizontal)
         self._slider.setMinimum(1)
@@ -46,7 +49,7 @@ class GraphWindow(QWidget):
         self.lay.addWidget(self._slider_value_label, 0, 0, 1, len(fields))
         self._graphs = []
         self._display(self._values[0])
-        self.setGeometry(self._graph_width, self._graph_width, self._graph_width * len(fields), 480)
+        self.setGeometry(self._graph_width, self._graph_width, self._graph_width * len(fields) + 100, 480)
 
     def _on_update(self):
         frame = self._values[self._slider.value() - 1]
