@@ -114,7 +114,6 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
             if eid not in status_changes:
                 continue
             status_group_order = [get_status_group(status_changes[eid][i][1]) for i in range(len(status_changes[eid]))]
-            print(*status_group_order)
             flag = True
             for i in range(1, len(status_group_order)):
                 if (status_group_order[i - 1], status_group_order[i]) in ((1, 0), (2, 1), (2, 0)):
@@ -132,6 +131,7 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
             for change in status_changes[eid]:
                 if change[0].day == curr_time.day:
                     finished_today_tasks += estimation
+                    break
 
         sum_est = in_progress + done + cancelled
         if sum_est == 0 or first_back_log_sum == 0:
@@ -145,7 +145,5 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
 
         curr_time += delta
 
-    import random
     st = datetime(start_date.year, start_date.month, start_date.day, *report_time)
     return [StateFrame(st + delta * i, *daily_report[i]) for i in range(len(daily_report))]
-    # return [StateFrame(datetime.now(), *(random.randint(0, 100) / 100 for _ in range(5))) for _ in range(10)]
