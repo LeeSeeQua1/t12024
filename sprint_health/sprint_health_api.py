@@ -52,10 +52,6 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
     for eid in estimation_changes.keys():
         estimation_changes[eid] = list(sorted(estimation_changes[eid], key=lambda t: t[0]))
 
-    # print(status_changes[4502897])
-    # print(resolution_changes[4502897])
-    # print(estimation_changes)
-
     report_time = (23, 59)
 
     curr_time = datetime(start_date.year, start_date.month, start_date.day, *report_time)
@@ -88,10 +84,13 @@ def get_spring_health(sprint_id: int, random=None) -> list[StateFrame]:  # TODO:
 
         sum_est = in_progress + done + cancelled
         if sum_est > 0:
-            daily_report.append((in_progress / sum_est, done / sum_est, cancelled / sum_est))
+            daily_report.append((in_progress / sum_est, cancelled / sum_est))
         curr_time += delta
 
     import random
     st = datetime(start_date.year, start_date.month, start_date.day, *report_time)
-    return [StateFrame(st + delta * i, *(random.randint(0, 100) for _ in range(2)), *daily_report[i]) for i in range(len(daily_report))]
+    return [StateFrame(st + delta * i,
+                       *(random.randint(0, 100) / 100 for _ in range(2)),
+                       *daily_report[i],
+                       random.randint(0, 100) / 100) for i in range(len(daily_report))]
     # return [StateFrame(datetime.now(), *(random.randint(0, 100) / 100 for _ in range(5))) for _ in range(10)]
