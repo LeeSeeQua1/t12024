@@ -38,6 +38,10 @@ class TaskType(IntEnum):
     HISTORY = 3,
     NONE = 4
 
+def get_sprints_name() -> list[str]:
+    with open(f"./dataset/sprints.csv", "r", newline='', encoding='utf-8') as f:
+        return [row["sprint_name"] for row in csv.DictReader(f, delimiter=';')]
+
 
 # def get_task_ids(sprint_id: int) -> list[int]:
 #     pass
@@ -46,5 +50,5 @@ class TaskType(IntEnum):
 # def get_status(task_id: int) -> list[TaskStatus]:
 #     pass
 
-def get_tasks_names(sprint_id: int) -> list[str]:
-    pass
+# def get_tasks_names(sprint_id: int) -> list[str]:
+#     pass
