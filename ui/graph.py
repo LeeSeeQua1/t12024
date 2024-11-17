@@ -63,6 +63,8 @@ class GraphWindow(QWidget):
             txt = QLabel(name)
             lay.addWidget(txt)
             self._graphs.append(lay)
+            self._graphs.append(txt)
+            self._graphs.append(bar)
             # self._progress_bars.append(bar)
             # self._progress_bars.append(txt)
             self.lay.addLayout(lay, 1, i)
